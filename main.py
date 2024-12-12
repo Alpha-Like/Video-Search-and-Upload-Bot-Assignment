@@ -1,4 +1,5 @@
 import os
+import sys
 import asyncio
 import aiohttp
 from instaloader import Instaloader, Post
@@ -86,15 +87,29 @@ async def process_reel(url: str) -> None:
 
     await upload_video_to_url(upload_url, video_file_path)
 
-    title = open(os.path.join('videos', os.listdir('videos')[1]), 'r').read()
+    title_file = [file for file in os.listdir('videos') if file.endswith('.txt')]
+    if not title_file:
+        raise Exception("No title file found in 'videos' directory.")
+    title = open(os.path.join('videos', title_file[0]), 'r').read()
+    
     await create_post(hash_value, title)
 
-    print("Process completed successfully: Video uploaded and post created.")
+    print(f"Process completed successfully for {url}: Video uploaded and post created.")
 
 async def main():
-    instagram_reel_url = 'https://www.instagram.com/reels/C_xnrVHyN7Y/'
-    await process_reel(instagram_reel_url)
-    shutil.rmtree('videos')
+    if len(sys.argv) < 2:
+        print("Usage: python3 main.py <url1> <url2> ...")
+        sys.exit(1)
+
+    urls = sys.argv[1:]
+    for url in urls:
+        try:
+            await process_reel(url)
+        except Exception as e:
+            print(f"Error processing {url}: {e}")
+        finally:
+            if os.path.exists('videos'):
+                shutil.rmtree('videos')
 
 if __name__ == "__main__":
     asyncio.run(main())
