@@ -1,78 +1,39 @@
-  README - Instagram Reel Uploader
+  Instagram Reel Downloader and Socialverse Uploader
 
-Instagram Reel Uploader
-=======================
+Instagram Reel Downloader and Socialverse Uploader
+==================================================
 
-This Python script automates the process of downloading Instagram reels, uploading them to a server, and creating a post on the Socialverse platform.
+This script allows you to download Instagram Reels and upload them to the Socialverse platform.
 
-Features
---------
-
-*   Download reels from Instagram using their URL.
-*   Generate a pre-signed upload URL from Socialverse API.
-*   Upload the downloaded reel to the server.
-*   Create a Socialverse post with a title and category ID.
-
-Prerequisites
--------------
-
-*   Python 3.7 or higher
-*   Pip-installed packages:
-    *   `aiohttp`
-    *   `instaloader`
-*   Set the environment variable `FLIC_TOKEN` with a valid token for API access.
-
-Installation
+Requirements
 ------------
 
-    pip install aiohttp instaloader
-    
+*   Python 3.x
+*   aiohttp library (install with \`pip install aiohttp\`)
+*   instaloader library (install with \`pip install instaloader\`)
+*   A Socialverse account with Flic Token
 
 Usage
 -----
 
-Run the script from the command line with the following syntax:
+1\. \*\*Set environment variable:\*\*
 
-    python3 main.py  \[-t \] \[-c <category\_id>\]
-    </pre>
+Set an environment variable named \`FLIC\_TOKEN\` with your Socialverse Flic Token.
 
-    <h3>Arguments:</h3>
-    <ul>
-        <li><code>url</code>: The URL of the Instagram reel to process (required).</li>
-        <li><code>-t</code>, <code>--title</code>: Optional title for the post. If not provided, the script reads the title from a <code>.txt</code> file downloaded with the reel.</li>
-        <li><code>-c</code>, <code>--category\_id</code>: Optional category ID for the post. Default is <code>25</code>.</li>
-    </ul>
+2\. \*\*Run the script:\*\*
 
-    <h2>Example</h2>
-    <pre>
-    python3 main.py https://www.instagram.com/reels/example-reel/ -t "My Reel" -c 69
-    </pre>
-    <p>If the title is not specified:</p>
-    <pre>
-    python3 main.py https://www.instagram.com/reels/example-reel/
-    </pre>
+python instagram\_reel\_uploader.py https://about.instagram.com/features/reels -t "Your Title" -c 25
 
-    <h2>Workflow</h2>
-    <ol>
-        <li>Downloads the Instagram reel and associated metadata using <code>Instaloader</code>.</li>
-        <li>Generates a pre-signed upload URL from the Socialverse API.</li>
-        <li>Uploads the reel video to the server using the generated URL.</li>
-        <li>Creates a Socialverse post with the provided or extracted title and category ID.</li>
-    </ol>
+*   **https://about.instagram.com/features/reels**: Replace this with the URL of the Instagram Reel you want to download.
+*   **\-t "Your Title" (optional)**: Specify a title for the Socialverse post.
+*   **\-c 25 (optional)**: Set the category ID for the Socialverse post (default is 25).
 
-    <h2>Error Handling</h2>
-    <p>The script includes error handling for the following scenarios:</p>
-    <ul>
-        <li>Invalid or inaccessible Instagram URL.</li>
-        <li>Missing video or title file after download.</li>
-        <li>Failed API calls for generating upload URLs or creating posts.</li>
-    </ul>
+Functionality
+-------------
 
-    <h2>Cleaning Up</h2>
-    <p>After processing, the script cleans up by deleting the <code>videos</code> directory.</p>
-
-    <h2>License</h2>
-    <p>MIT License</p>
-</body>
-</html>
-</x-turndown>
+*   Downloads the Instagram Reel video using Instaloader.
+*   Generates a pre-signed upload URL from Socialverse API.
+*   Uploads the video to Socialverse using the pre-signed URL.
+*   Creates a new post on Socialverse with the uploaded video.
+*   Optionally reads title from a ".txt" file in the downloaded video directory.
+*   Cleans up the downloaded video files after successful upload.
