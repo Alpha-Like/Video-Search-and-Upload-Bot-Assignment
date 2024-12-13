@@ -2,10 +2,32 @@ import os
 import sys
 import asyncio
 import aiohttp
+import argparse
 from instaloader import Instaloader, Post
 import shutil
 
 FLIC_TOKEN = os.getenv('FLIC_TOKEN')
+
+class Suppress:
+    def __init__(self):
+        self.stdout = None
+    
+    def __enter__(self):
+        self.stdout = sys.stdout
+        sys.stdout = open(os.devnull, 'w')
+
+    def __exit__(self, t, v, tb):
+        sys.stdout = self.stdout
+
+def parse_arguments():
+    """
+    Parse command-line arguments.
+    """
+    parser = argparse.ArgumentParser(description="Download Instagram reels and upload them to Socialverse.")
+    parser.add_argument('url', help="Instagram reel URL")
+    parser.add_argument('-t', '--title', help="Title for the post (optional)")
+    parser.add_argument('-c', '--category_id', type=int, default=25, help="Category ID for the post (default: 25)")
+    return parser.parse_args()
 
 async def download_from_instagram(url: str) -> None:
     """
@@ -17,7 +39,8 @@ async def download_from_instagram(url: str) -> None:
 
     os.makedirs('videos', exist_ok=True)
 
-    il.download_post(post, target='videos')
+    with Suppress():
+        il.download_post(post, target='videos')
 
     for file in os.listdir('videos'):
         if not file.endswith('.mp4') and not file.endswith('.txt'):
@@ -50,7 +73,7 @@ async def upload_video_to_url(upload_url: str, file_path: str) -> None:
                 if response.status != 200:
                     raise Exception(f"Failed to upload video: {response.status}, {await response.text()}")
 
-async def create_post(hash_value: str, title: str, category_id: int = 69) -> None:
+async def create_post(hash_value: str, title: str, category_id: int) -> None:
     """
     Create a post on the Socialverse platform using the video hash.
     """
@@ -70,7 +93,7 @@ async def create_post(hash_value: str, title: str, category_id: int = 69) -> Non
             if response.status != 200:
                 raise Exception(f"Failed to create post: {response.status}, {await response.text()}")
 
-async def process_reel(url: str) -> None:
+async def process_reel(url: str, title: str = None, category_id: int = 25) -> None:
     """
     End-to-end process: download, upload, and create a post for an Instagram reel.
     """
@@ -87,29 +110,27 @@ async def process_reel(url: str) -> None:
 
     await upload_video_to_url(upload_url, video_file_path)
 
-    title_file = [file for file in os.listdir('videos') if file.endswith('.txt')]
-    if not title_file:
-        raise Exception("No title file found in 'videos' directory.")
-    title = open(os.path.join('videos', title_file[0]), 'r').read()
+    if not title:
+        title_file = [file for file in os.listdir('videos') if file.endswith('.txt')]
+        if not title_file:
+            title = 'A Video'
+        else:
+            title = open(os.path.join('videos', title_file[0]), 'r').read().strip()
     
-    await create_post(hash_value, title)
+    await create_post(hash_value, title, category_id)
 
     print(f"Process completed successfully for {url}: Video uploaded and post created.")
 
 async def main():
-    if len(sys.argv) < 2:
-        print("Usage: python3 main.py <url1> <url2> ...")
-        sys.exit(1)
+    args = parse_arguments()
 
-    urls = sys.argv[1:]
-    for url in urls:
-        try:
-            await process_reel(url)
-        except Exception as e:
-            print(f"Error processing {url}: {e}")
-        finally:
-            if os.path.exists('videos'):
-                shutil.rmtree('videos')
+    try:
+        await process_reel(args.url, args.title, args.category_id)
+    except Exception as e:
+        print(f"Error processing {args.url}: {e}")
+    finally:
+        if os.path.exists('videos'):
+            shutil.rmtree('videos')
 
 if __name__ == "__main__":
     asyncio.run(main())
