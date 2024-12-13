@@ -27,7 +27,7 @@ bash
 python3 main.py url -t "Your Title" -c 25
 ```
 
-*   **https://about.instagram.com/features/reels**: Replace this with the URL of the Instagram Reel you want to download.
+*   **url**: Replace this with the URL of the Instagram Reel you want to download.
 *   **\-t "Your Title" (optional)**: Specify a title for the Socialverse post.
 *   **\-c 25 (optional)**: Set the category ID for the Socialverse post (default is 25).
 
