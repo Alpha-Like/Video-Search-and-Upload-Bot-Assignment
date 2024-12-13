@@ -16,13 +16,16 @@ Requirements
 Usage
 -----
 
-1\. \*\*Set environment variable:\*\*
+1. **Set environment variable:**
 
-Set an environment variable named \`FLIC\_TOKEN\` with your Socialverse Flic Token.
+Set an environment variable named `FLIC_TOKEN` with your Socialverse Flic Token.
 
-2\. \*\*Run the script:\*\*
+2. **Run the script:**
 
-python instagram\_reel\_uploader.py https://about.instagram.com/features/reels -t "Your Title" -c 25
+bash 
+```
+python3 main.py url -t "Your Title" -c 25
+```
 
 *   **https://about.instagram.com/features/reels**: Replace this with the URL of the Instagram Reel you want to download.
 *   **\-t "Your Title" (optional)**: Specify a title for the Socialverse post.
